@@ -83,11 +83,11 @@ load_settings()
 
 with window('Recognition Settings', width=600, height=200):
     add_input_float('xFinder', label='X Search Position',
-                    max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='xPos', step=0.001)
+                    max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='xPos', step=0.001, tip='X position of the search pixel')
     add_input_float('yFinder', label='Y Search Position',
-                    max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='yPos', step=0.001)
+                    max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='yPos', step=0.001, tip='Y position of the search pixel')
 
-    add_button('sampleCol', label='Sample Color', callback=sample_color)
+    add_button('sampleCol', label='Sample Color', callback=sample_color, tip='Get the colour to search for')
 
     add_child('colourDisplayHolder', border=False, width=600, height=100)
 
@@ -102,16 +102,16 @@ with window('Recognition Settings', width=600, height=200):
     end()
 
 with window('Timelapse', width=600, height=200):
-    add_button('startRedDot', label='Start Red Dot', callback=start_timelapse)
+    add_button('startRedDot', label='Start Red Dot', callback=start_timelapse, tip='Start the red-dot searching timelapse with current settings')
 
     add_input_int('sensInp', label='Sensitivity', source='sensitivity',
-                  min_value=0, max_value=255, min_clamped=True, max_clamped=True)
+                  min_value=0, max_value=255, min_clamped=True, max_clamped=True, tip='The sensitivity of the search, decrease value if you are getting false positives\nand increase if software does not recognise the dot')
     add_input_float('picDelay', label='Capture Delay', source='pictureDelay',
-                    min_value=0, max_value=1, min_clamped=True, max_clamped=True)
+                    min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay between dot recognition and capture of frame, increase if timelapses are jittery')
 
 with window('Actions', width=100, height=100):
-    add_button('saveButton', label='Save Settings', callback=save_settings)
-    add_button('exitButton', label='Exit', callback=kill)
+    add_button('saveButton', label='Save Settings', callback=save_settings, tip='Save all current settings')
+    add_button('exitButton', label='Exit', callback=kill, tip='Exit without saving')
 
 with window('Video Capture', width=640, height=480):
     add_drawing('mainImage', width=640, height=480)

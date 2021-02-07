@@ -114,7 +114,7 @@ with window('Timelapse', width=600, height=200):
     add_input_int('sensInp', label='Sensitivity', source='sensitivity',
                   min_value=0, max_value=255, min_clamped=True, max_clamped=True, tip='The sensitivity of the search, decrease value if you are getting false positives\nand increase if software does not recognise the dot')
     add_input_float('picDelay', label='Capture Delay', source='pictureDelay',
-                    min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay between dot recognition and capture of frame, increase if timelapses are jittery')
+                    min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay (in seconds) between dot recognition and capture of frame, increase if timelapses are jittery')
 
 with window('Actions', width=100, height=100):
     add_button('saveButton', label='Save Settings',

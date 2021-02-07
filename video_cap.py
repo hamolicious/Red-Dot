@@ -25,7 +25,7 @@ def load_settings():
 
     search_pos = Vec2(settings.get('searchPos'))
     search_pos.mult((640, 480))
-    search_color = Vec3(settings.get('sampleCol'))
+    search_color = Vec3(settings.get('sampledColor'))
 
     return search_color, search_pos
 
@@ -44,6 +44,9 @@ def save_frame(frame, frame_count, directory):
 
 def timelapse_worker(sensitivity, picture_delay):
     search_color, search_pos = load_settings()
+
+    if not os.path.exists('Timelapses/'):
+        os.mkdir('Timelapses')
 
     cwdir = f'Timelapses/Timelapse-{int(time())}'
     os.mkdir(cwdir)

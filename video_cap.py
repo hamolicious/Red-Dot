@@ -16,6 +16,7 @@ def get_image():
     cap.release()
     cv2.destroyAllWindows()
 
+
 def load_settings():
     try:
         settings = json.load(open('save_files/settings.json', 'r'))
@@ -28,9 +29,11 @@ def load_settings():
 
     return search_color, search_pos
 
+
 def is_in_pos(search_color, current_color, sensitivity):
     change = sum((search_color - current_color).get()) / 3
     return change < sensitivity
+
 
 def save_frame(frame, frame_count, directory):
     filepath = os.path.join(directory, f'frame-{frame_count:05}.png')
@@ -38,7 +41,8 @@ def save_frame(frame, frame_count, directory):
 
     print(f'{time()} | Saved: {filepath}')
 
-def timelapse_worker():
+
+def timelapse_worker(sensitivity, picture_delay):
     search_color, search_pos = load_settings()
 
     cwdir = f'Timelapses/Timelapse-{int(time())}'
@@ -47,12 +51,7 @@ def timelapse_worker():
     frame_lock = False
     await_time = -1
 
-    # TODO add to settings
-    sensitivity = 50
-    picture_delay = 1
-
     inverted_color = (Vec3(255, 255, 255) - search_color) * -1
-
 
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
@@ -70,7 +69,7 @@ def timelapse_worker():
                 frame_lock = True
         else:
             frame_lock = False
-        
+
         if await_time != -1 and time() > await_time:
             save_frame(frame, frame_count, cwdir)
             frame_count += 1
@@ -84,7 +83,8 @@ def timelapse_worker():
     cv2.destroyAllWindows()
 
 
-def begin_timelapse():
-    new_thread = Thread(target=timelapse_worker)
+def begin_timelapse(sensitivity, picture_delay):
+    new_thread = Thread(target=timelapse_worker,
+                        args=(sensitivity, picture_delay,))
     new_thread.daemon = True
     new_thread.start()

@@ -40,10 +40,16 @@ def sample_color():
     modify_draw_command('colourDisplayer', 'rect##dynamic', fill=colour)
 
 
+def start_timelapse():
+    begin_timelapse(get_value('sensitivity'), get_value('pictureDelay'))
+
+
 def save_settings():
     settings = {
         "searchPos": [get_value('xPos'), get_value('yPos')],
-        "sampleCol": get_value('sampledColor')
+        "sampledColor": get_value('sampledColor'),
+        "sensitivity": get_value('sensitivity'),
+        "pictureDelay": get_value('pictureDelay'),
     }
     json.dump(settings, open('save_files/settings.json', 'w'))
 
@@ -53,6 +59,9 @@ def load_settings():
     add_value('xPos', .5)
     add_value('yPos', .5)
 
+    add_value('sensitivity', 50)
+    add_value('pictureDelay', 1.0)
+
     try:
         settings = json.load(open('save_files/settings.json', 'r'))
     except FileNotFoundError:
@@ -60,15 +69,19 @@ def load_settings():
 
     set_value('xPos', settings.get('searchPos')[0])
     set_value('yPos', settings.get('searchPos')[1])
-    set_value('sampledColor', settings.get('sampleCol'))
+    set_value('sampledColor', settings.get('sampledColor'))
+    set_value('sensitivity', settings.get('sensitivity'))
+    set_value('pictureDelay', settings.get('pictureDelay'))
 
-    return settings
+
+def kill():
+    quit()
 
 
 load_settings()
 
 
-with window('Recognition Settings', width=600, height=250):
+with window('Recognition Settings', width=600, height=200):
     add_input_float('xFinder', label='X Search Position',
                     max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='xPos', step=0.001)
     add_input_float('yFinder', label='Y Search Position',
@@ -88,10 +101,17 @@ with window('Recognition Settings', width=600, height=250):
              parent='colourDisplayHolder')
     end()
 
-    add_button('saveButton', label='Save Settings', callback=save_settings)
-
 with window('Timelapse', width=600, height=200):
-    add_button('startRedDot', label='Start Red Dot', callback=begin_timelapse)
+    add_button('startRedDot', label='Start Red Dot', callback=start_timelapse)
+
+    add_input_int('sensInp', label='Sensitivity', source='sensitivity',
+                  min_value=0, max_value=255, min_clamped=True, max_clamped=True)
+    add_input_float('picDelay', label='Capture Delay', source='pictureDelay',
+                    min_value=0, max_value=1, min_clamped=True, max_clamped=True)
+
+with window('Actions', width=100, height=100):
+    add_button('saveButton', label='Save Settings', callback=save_settings)
+    add_button('exitButton', label='Exit', callback=kill)
 
 with window('Video Capture', width=640, height=480):
     add_drawing('mainImage', width=640, height=480)

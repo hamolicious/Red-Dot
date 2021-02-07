@@ -4,7 +4,7 @@ import json
 from threading import Thread
 import os
 from time import time
-from vector_class import Vector3D as Vec
+from vector_class import Vector3D as Vec3, Vector2D as Vec2
 
 
 def get_image():
@@ -16,40 +16,66 @@ def get_image():
     cap.release()
     cv2.destroyAllWindows()
 
-
-def timelapse_worker():
+def load_settings():
     try:
         settings = json.load(open('save_files/settings.json', 'r'))
     except FileNotFoundError:
         return
 
-    search_x, search_y = settings.get('searchPos')
-    search_x = int(search_x * 640)
-    search_y = int(search_y * 480)
-    search_color = Vec(settings.get('sampleCol'))
+    search_pos = Vec2(settings.get('searchPos'))
+    search_pos.mult((640, 480))
+    search_color = Vec3(settings.get('sampleCol'))
+
+    return search_color, search_pos
+
+def is_in_pos(search_color, current_color, sensitivity):
+    change = sum((search_color - current_color).get()) / 3
+    return change < sensitivity
+
+def save_frame(frame, frame_count, directory):
+    filepath = os.path.join(directory, f'frame-{frame_count:05}.png')
+    cv2.imwrite(filepath, frame)
+
+    print(f'{time()} | Saved: {filepath}')
+
+def timelapse_worker():
+    search_color, search_pos = load_settings()
 
     cwdir = f'Timelapses/Timelapse-{int(time())}'
     os.mkdir(cwdir)
-    frames = 0
+    frame_count = 0
     frame_lock = False
-    dchange = 50
+    await_time = -1
+
+    # TODO add to settings
+    sensitivity = 50
+    picture_delay = 1
+
+    inverted_color = (Vec3(255, 255, 255) - search_color) * -1
+
 
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     while True:
         _, frame = cap.read()
-
+        image = cv2.circle(frame, search_pos.get(), 5, inverted_color.get(), 2)
         cv2.imshow('Timelapse on-going', frame)
 
-        color = Vec(list(frame[search_y][search_x]))
-        if sum((search_color - color).get()) < dchange:
+        current_color = Vec3(list(frame[int(search_pos.y)][int(search_pos.x)]))
+        if is_in_pos(search_color, current_color, sensitivity):
             if not frame_lock:
-                cv2.imwrite(os.path.join(
-                    cwdir, f'frame-{frames:05}.png'), frame)
-                frames += 1
+                print(f'{time()} | Starting to take picture')
+                await_time = time() + picture_delay
+                search_color = current_color.copy()
                 frame_lock = True
         else:
             frame_lock = False
+        
+        if await_time != -1 and time() > await_time:
+            save_frame(frame, frame_count, cwdir)
+            frame_count += 1
+
+            await_time = -1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

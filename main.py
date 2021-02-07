@@ -90,7 +90,7 @@ with window('Recognition Settings', width=600, height=250):
 
     add_button('saveButton', label='Save Settings', callback=save_settings)
 
-with window('Timelapse', width=600, height=600):
+with window('Timelapse', width=600, height=200):
     add_button('startRedDot', label='Start Red Dot', callback=begin_timelapse)
 
 with window('Video Capture', width=640, height=480):

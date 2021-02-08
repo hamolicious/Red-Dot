@@ -11,6 +11,9 @@ system('cls')
 
 
 def update_image():
+    """
+    Updates the image on the home screen
+    """
     get_image()
 
     x = get_value('xPos')
@@ -22,6 +25,9 @@ def update_image():
 
 
 def update_circle():
+    """
+    Updates the search circle on the main screen when position is changed
+    """
     x = get_value('xPos')
     y = get_value('yPos')
 
@@ -29,13 +35,22 @@ def update_circle():
 
 
 def sample_color():
+    """
+    Samples the colour defined by the circle
+    """
+
+    # read the image
     img = cv2.imread('out.jpg', cv2.IMREAD_COLOR)
+
+    # fetch and convert the position values
     x = int(get_value('xPos') * 640)
     y = int(get_value('yPos') * 480)
 
+    # fetch and save the colour
     colour = [int(i) for i in img[y][x][::-1]]
     set_value('sampledColor', colour)
 
+    # update the text and colour rect on main screen
     delete_item('colourDisplayText')
     add_text('colourDisplayText', default_value=str(
         colour), parent='colourDisplayHolder')
@@ -43,10 +58,17 @@ def sample_color():
 
 
 def start_timelapse():
+    """
+    start the timelapse in video_cap.py
+    """
+
     begin_timelapse(get_value('sensitivity'), get_value('pictureDelay'))
 
 
 def save_settings():
+    """
+    saves settings to a json file
+    """
     settings = {
         "searchPos": [get_value('xPos'), get_value('yPos')],
         "sampledColor": get_value('sampledColor'),
@@ -57,6 +79,11 @@ def save_settings():
 
 
 def load_settings():
+    """
+    loads the settings file (if exists) else creates the file and sets default values
+    """
+    
+    # create space in memory for settings and asign default values
     add_value('sampledColor', [0, 0, 0])
     add_value('xPos', .5)
     add_value('yPos', .5)
@@ -64,16 +91,21 @@ def load_settings():
     add_value('sensitivity', 10)
     add_value('pictureDelay', 1.0)
 
+    # check if save files dir exists
     if not os.path.exists('save_files'):
         os.mkdir('save_files')
 
+    # see if file exists
     try:
+        # if file exists load it
         settings = json.load(open('save_files/settings.json', 'r'))
     except FileNotFoundError:
+        # else create the file and fill it with default settings
         json.dump({}, open('save_files/settings.json', 'w'))
         save_settings()
         return
 
+    # if file loaded, fill out the memory with settings
     set_value('xPos', settings.get('searchPos')[0])
     set_value('yPos', settings.get('searchPos')[1])
     set_value('sampledColor', settings.get('sampledColor'))
@@ -82,6 +114,9 @@ def load_settings():
 
 
 def kill():
+    """
+    kills the program
+    """
     sys.exit(0)
 
 
@@ -89,6 +124,9 @@ load_settings()
 
 
 with window('Recognition Settings', width=600, height=210):
+    """
+    recognition settings
+    """
     set_window_pos('Recognition Settings', 650, 220)
 
     add_input_float('xFinder', label='X Search Position',
@@ -112,6 +150,9 @@ with window('Recognition Settings', width=600, height=210):
     end()
 
 with window('Timelapse', width=600, height=200):
+    """
+    timelapse settings
+    """
     set_window_pos('Timelapse', 650, 10)
 
     add_button('startRedDot', label='Start Red Dot', callback=start_timelapse,
@@ -125,6 +166,9 @@ with window('Timelapse', width=600, height=200):
                     min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay (in seconds) between dot recognition and capture of frame, increase if timelapses are jittery')
 
 with window('Actions', width=150, height=100):
+    """
+    actions such as saving and quiting
+    """
     set_window_pos('Actions', 650, 440)
 
     add_button('saveButton', label='Save Settings',
@@ -133,8 +177,11 @@ with window('Actions', width=150, height=100):
                callback=kill, tip='Exit without saving')
 
 with window('Video Capture', width=640, height=480):
+    """
+    display camera image
+    """
     add_drawing('mainImage', width=640, height=480)
     update_image()
 
-set_main_window_size(800, 700)
+set_main_window_size(1200, 700)
 start_dearpygui(primary_window='Video Capture')

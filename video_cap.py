@@ -22,7 +22,7 @@ def print_stamped(text):
     else:
         delta_time = 'N/A'
 
-    print(f'{time_stamp.tm_hour}:{time_stamp.tm_min}:{time_stamp.tm_sec} | {Fore.GREEN + text + Fore.RESET} | Time since last report {delta_time} seconds')
+    print(f'{time_stamp.tm_hour:02}:{time_stamp.tm_min:02}:{time_stamp.tm_sec:02} | {Fore.GREEN + text + Fore.RESET} | Time since last report {delta_time} seconds')
     TimeSave.last_stamp = time()
 
 

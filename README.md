@@ -6,6 +6,7 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - [ ] Increase the resolution from 640x480 to at least HD
 - [ ] Increase the customisability of the software such as paths and themes
 - [ ] Add a normal timelapse feature
+- [ ] Add live preview to the main screen
 
 ## Instructions:
 - Find something small that you can attach to the bed that is a different colour, I used a red label and cut a circle out of it

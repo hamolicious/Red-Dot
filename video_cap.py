@@ -48,17 +48,37 @@ def get_delta_col(search_color, current_color):
     return change
 
 
-def save_frame(frame, frame_count, directory):
+def save_frame(cap, frame_count, directory, preview_res, img_res):
     """
     saves a frame and displays the path in std.out
     """
+    # set capture to img resolution
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, img_res[0])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, img_res[1])
+
+    # capture a frame
+    _, frame = cap.read()
+
+    # reset to preview resolution
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, preview_res[0])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, preview_res[1])
+
+    # save frame
     filepath = os.path.join(directory, f'frame-{frame_count:05}.png')
     cv2.imwrite(filepath, frame)
 
     print(f'{time()} | Saved: {filepath}')
 
 
-def timelapse_worker(sensitivity, picture_delay):
+def create_cap(res):
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, res[0])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, res[1])
+
+    return cap
+
+
+def timelapse_worker(sensitivity, picture_delay, preview_res, img_res):
     """
     main timelapse thread
     """
@@ -80,10 +100,11 @@ def timelapse_worker(sensitivity, picture_delay):
     await_time = -1
 
     # create an inverted colour for easier sight of the search circle
-    inverted_color = [abs(255 - search_color[0]), abs(255 - search_color[1]), abs(255 - search_color[2])]
+    inverted_color = [abs(255 - search_color[0]),
+                      abs(255 - search_color[1]), abs(255 - search_color[2])]
 
     # create a capture object
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = create_cap(preview_res)
 
     # main loop
     while True:
@@ -91,7 +112,8 @@ def timelapse_worker(sensitivity, picture_delay):
         _, frame = cap.read()
 
         # get the colour at the search circle
-        current_color = [int(i) for i in frame[int(search_pos[1])][int(search_pos[0])][::-1]]
+        current_color = [int(i) for i in frame[int(
+            search_pos[1])][int(search_pos[0])][::-1]]
         # calculate the change
         change = get_delta_col(search_color, current_color)
 
@@ -119,7 +141,7 @@ def timelapse_worker(sensitivity, picture_delay):
         # see if time to take picture
         if await_time != -1 and time() > await_time:
             # take a picture
-            save_frame(frame, frame_count, cwdir)
+            save_frame(cap, frame_count, cwdir, preview_res, img_res)
 
             # update frame counter
             frame_count += 1
@@ -136,16 +158,26 @@ def timelapse_worker(sensitivity, picture_delay):
     cv2.destroyAllWindows()
 
 
-def begin_timelapse(sensitivity, picture_delay):
+def begin_timelapse(sensitivity, picture_delay, preview_res, img_res):
     """
     begins a new timelapse thread
     """
     new_thread = Thread(target=timelapse_worker,
-                        args=(sensitivity, picture_delay,))
+                        args=(sensitivity, picture_delay, preview_res, img_res,))
     new_thread.daemon = True
     new_thread.start()
 
-def viewer():
+def begin_viewer(sensitivity, preview_res):
+    """
+    begins a new viewer thread
+    """
+    new_thread = Thread(target=viewer,
+                        args=(sensitivity, preview_res,))
+    new_thread.daemon = True
+    new_thread.start()
+
+
+def viewer(sensitivity, preview_res):
     """
     a live viewer for calibration
     """
@@ -153,7 +185,8 @@ def viewer():
     search_color, search_pos = load_settings()
 
     # create a capture object
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    width, height = preview_res
+    cap = create_cap(preview_res)
 
     # main loop
     while True:
@@ -161,18 +194,23 @@ def viewer():
         _, frame = cap.read()
 
         # get the current colour
-        current_color = [int(i) for i in frame[int(search_pos[1])][int(search_pos[0])][::-1]]
+        current_color = [int(i) for i in frame[int(
+            search_pos[1])][int(search_pos[0])][::-1]]
         # calculate change
         change = get_delta_col(search_color, current_color)
 
         # display information about the sensitivity
-        frame = cv2.putText(frame, f'Change: {int(sqrt(change))}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
-        frame = cv2.putText(frame, f'Sample Col: {current_color}', (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
-        frame = cv2.putText(frame, f'Sample Col: {search_color}', (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Change: {int(sqrt(change))} | Sensitivity: {sensitivity}', (
+            10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Sample Col: {current_color}', (
+            10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Sample Col: {search_color}', (
+            10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
         frame = cv2.circle(frame, search_pos, 5, (0, 0, 0), 1)
 
         # draw a crosshair to ease aligning to center of bed
-        cx = int(640 / 2) ; cy = int(480 / 2)
+        cx = int(width  / 2)
+        cy = int(height / 2)
         cs = 50
         frame = cv2.line(frame, (cx - cs, cy), (cx + cs, cy), (0, 0, 0), 1)
         frame = cv2.line(frame, (cx, cy - cs), (cx, cy + cs), (0, 0, 0), 1)

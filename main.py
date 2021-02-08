@@ -1,6 +1,6 @@
 from dearpygui.core import *
 from dearpygui.simple import *
-from video_cap import get_image, begin_timelapse, viewer
+from video_cap import get_image, begin_timelapse, begin_viewer
 import cv2
 import json
 import os
@@ -62,7 +62,15 @@ def start_timelapse():
     start the timelapse in video_cap.py
     """
 
-    begin_timelapse(get_value('sensitivity'), get_value('pictureDelay'))
+    begin_timelapse(get_value('sensitivity'), get_value('pictureDelay'), get_value('tupleprevRes'), get_value('tupleimgRes'))
+
+
+def start_viewer():
+    """
+    start the viewer in video_cap.py
+    """
+
+    begin_viewer(get_value('sensitivity'), get_value('tupleprevRes'))
 
 
 def save_settings():
@@ -74,9 +82,10 @@ def save_settings():
         "sampledColor": get_value('sampledColor'),
         "sensitivity": get_value('sensitivity'),
         "pictureDelay": get_value('pictureDelay'),
+        "tupleprevRes": get_value('tupleprevRes'),
+        "tupleimgRes": get_value('tupleimgRes'),
     }
     json.dump(settings, open('save_files/settings.json', 'w'))
-
 
 def load_settings():
     """
@@ -90,6 +99,9 @@ def load_settings():
 
     add_value('sensitivity', 10)
     add_value('pictureDelay', 1.0)
+
+    add_value('tupleprevRes', [640, 480])
+    add_value('tupleimgRes', [1280, 720])
 
     # check if save files dir exists
     if not os.path.exists('save_files'):
@@ -109,8 +121,12 @@ def load_settings():
     set_value('xPos', settings.get('searchPos')[0])
     set_value('yPos', settings.get('searchPos')[1])
     set_value('sampledColor', settings.get('sampledColor'))
+
     set_value('sensitivity', settings.get('sensitivity'))
     set_value('pictureDelay', settings.get('pictureDelay'))
+
+    set_value('tupleprevRes', settings.get('tupleprevRes'))
+    set_value('tupleimgRes', settings.get('tupleimgRes'))
 
 
 def kill():
@@ -157,13 +173,18 @@ with window('Timelapse', width=600, height=200):
 
     add_button('startRedDot', label='Start Red Dot', callback=start_timelapse,
                tip='Start the red-dot searching timelapse with current settings')
-    add_button('startViewer', label='Start Viewer', callback=viewer,
+    add_button('startViewer', label='Start Viewer', callback=start_viewer,
                tip='Start the viewer, used to calibrate sensitivity')
 
     add_input_int('sensInp', label='Sensitivity', source='sensitivity',
                   min_value=0, max_value=255, min_clamped=True, max_clamped=True, tip='The sensitivity of the search, decrease value if you are getting false positives\nand increase if software does not recognise the dot')
     add_input_float('picDelay', label='Capture Delay', source='pictureDelay',
                     min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay (in seconds) between dot recognition and capture of frame, increase if timelapses are jittery')
+
+    add_input_int2('prevRes', label='Preview Resolution', source='tupleprevRes', default_value=(640, 480),
+                  tip='Preview resolution, keep this value very low for best results')
+    add_input_int2('imgRes', label='Image Resolution', source='tupleimgRes', default_value=(640, 480),
+                  tip='Image resolution, if your output is black, it\'s possible your camera does not\nsupport the resolution')
 
 with window('Actions', width=150, height=100):
     """

@@ -4,6 +4,7 @@ from video_cap import get_image, begin_timelapse
 import cv2
 import json
 import os
+import sys
 
 from os import system
 system('cls')
@@ -81,7 +82,7 @@ def load_settings():
 
 
 def kill():
-    quit()
+    sys.quit()
 
 
 load_settings()

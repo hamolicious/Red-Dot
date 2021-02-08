@@ -32,7 +32,7 @@ def load_settings():
 def is_in_pos(search_color, current_color, sensitivity):
     r, g, b = search_color
     rp, gp, bp = current_color
-    change = int(sum([abs(rp - r), abs(gp - r), abs(bp - b)]) / 3)
+    change = int(sum([abs(rp - r), abs(gp - g), abs(bp - b)]) / 3)
     return change < sensitivity
 
 

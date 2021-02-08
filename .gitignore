@@ -1,11 +1,12 @@
 __pycache__/
-out.jpg
 Timelapses/
 .vscode/
 build/
 dist/
-main.spec
 save_files/
+
+main.spec
+out.jpg
 gcode_gen.py
 dummy.gcode
 frames_player.py

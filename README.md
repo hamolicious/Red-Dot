@@ -1,3 +1,2 @@
 # Red-Dot
-Hardware-less 3D Printing Time-lapse solution, includes a "Growing Print" time lapse and a normal time lapse feature.
-<a href="https://www.youtube.com/watch?v=6sNrJOpd8mA">Youtube Video of first test</a>
+Red-Dot is a hardware-less 3D printing time-lapse software that utilises the camera to take the picture at the right time to make those awesome "growing" timelapses.

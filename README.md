@@ -2,7 +2,9 @@
 Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utilises the camera to detect when to take the picture to make those awesome "growing" time-lapses
 ![mainScreen](https://github.com/hamolicious/Red-Dot/blob/main/screenshots/main_screen_screenshot.png?raw=true)
 
-## [2nd Test of the software (after re-write)](https://youtu.be/0GNZLhH4Ag8)
+## Tests:
+- [2nd Test (after re-write)](https://youtu.be/0GNZLhH4Ag8)
+- [1st Test](https://www.youtube.com/watch?v=6sNrJOpd8mA)
 
 ## Some things that I want to change:
 - [ ] Increase the resolution from 640x480 to at least HD

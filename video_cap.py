@@ -4,7 +4,6 @@ import json
 from threading import Thread
 import os
 from time import time
-from vector_class import Vector3D as Vec3, Vector2D as Vec2
 
 
 def get_image():
@@ -23,15 +22,17 @@ def load_settings():
     except FileNotFoundError:
         return
 
-    search_pos = Vec2(settings.get('searchPos'))
-    search_pos.mult((640, 480))
-    search_color = Vec3(settings.get('sampledColor'))
+    search_pos = settings.get('searchPos')
+    search_pos = (int(search_pos[0] * 640), int(search_pos[1] * 480))
+    search_color = settings.get('sampledColor')
 
     return search_color, search_pos
 
 
 def is_in_pos(search_color, current_color, sensitivity):
-    change = sum((search_color - current_color).get()) / 3
+    r, g, b = search_color
+    rp, gp, bp = current_color
+    change = int(sum([abs(rp - r), abs(gp - r), abs(bp - b)]) / 3)
     return change < sensitivity
 
 
@@ -54,16 +55,16 @@ def timelapse_worker(sensitivity, picture_delay):
     frame_lock = False
     await_time = -1
 
-    inverted_color = (Vec3(255, 255, 255) - search_color) * -1
+    inverted_color = [abs(255 - search_color[0]), abs(255 - search_color[1]), abs(255 - search_color[2])]
 
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     while True:
         _, frame = cap.read()
-        image = cv2.circle(frame, search_pos.get(), 5, inverted_color.get(), 2)
+        image = cv2.circle(frame, search_pos, 5, inverted_color, 2)
         cv2.imshow('Timelapse on-going', frame)
 
-        current_color = Vec3(list(frame[int(search_pos.y)][int(search_pos.x)]))
+        current_color = [int(i) for i in frame[int(search_pos[0])][int(search_pos[1])]]
         if is_in_pos(search_color, current_color, sensitivity):
             if not frame_lock:
                 print(f'{time()} | Starting to take picture')

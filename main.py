@@ -88,7 +88,7 @@ def kill():
 load_settings()
 
 
-with window('Recognition Settings', width=600, height=200):
+with window('Recognition Settings', width=600, height=210):
     add_input_float('xFinder', label='X Search Position',
                     max_value=1, max_clamped=True, min_clamped=True, callback=update_circle, source='xPos', step=0.001, tip='X position of the search pixel')
     add_input_float('yFinder', label='Y Search Position',
@@ -118,7 +118,7 @@ with window('Timelapse', width=600, height=200):
     add_input_float('picDelay', label='Capture Delay', source='pictureDelay',
                     min_value=0, max_value=5, min_clamped=True, max_clamped=True, tip='The delay (in seconds) between dot recognition and capture of frame, increase if timelapses are jittery')
 
-with window('Actions', width=100, height=100):
+with window('Actions', width=150, height=100):
     add_button('saveButton', label='Save Settings',
                callback=save_settings, tip='Save all current settings')
     add_button('exitButton', label='Exit',

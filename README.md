@@ -7,7 +7,7 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - [1st Test](https://www.youtube.com/watch?v=6sNrJOpd8mA)
 
 ## Some things that I want to change:
-- [ ] Increase the resolution from 640x480 to at least HD
+- [x] Increase the resolution from 640x480 to at least HD
 - [ ] Increase the customisability of the software such as paths and themes
 - [ ] Add a normal timelapse feature
 - [ ] Add live preview to the main screen

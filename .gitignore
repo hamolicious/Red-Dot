@@ -1,12 +1,20 @@
+# Python files
 __pycache__/
 Timelapses/
-.vscode/
-build/
-dist/
 save_files/
 
-main.spec
 out.jpg
-gcode_gen.py
+
+# VS Code
+.vscode/
+
+# Testing files
 dummy.gcode
 frames_player.py
+gcode_gen.py
+
+# Build files
+build/
+dist/
+
+main.spec

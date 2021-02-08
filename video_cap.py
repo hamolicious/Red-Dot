@@ -4,6 +4,7 @@ import json
 from threading import Thread
 import os
 from time import time
+from math import sqrt
 
 
 def get_image():
@@ -24,16 +25,17 @@ def load_settings():
 
     search_pos = settings.get('searchPos')
     search_pos = (int(search_pos[0] * 640), int(search_pos[1] * 480))
-    search_color = settings.get('sampledColor')
+    search_color = [int(i) for i in settings.get('sampledColor')]
 
     return search_color, search_pos
 
 
-def is_in_pos(search_color, current_color, sensitivity):
+def get_delta_col(search_color, current_color):
     r, g, b = search_color
     rp, gp, bp = current_color
-    change = int(sum([abs(rp - r), abs(gp - g), abs(bp - b)]) / 3)
-    return change < sensitivity
+
+    change = abs(int(r - rp) + int(g - gp) + int(b - bp))
+    return change
 
 
 def save_frame(frame, frame_count, directory):
@@ -61,11 +63,16 @@ def timelapse_worker(sensitivity, picture_delay):
 
     while True:
         _, frame = cap.read()
-        image = cv2.circle(frame, search_pos, 5, inverted_color, 2)
+
+        current_color = [int(i) for i in frame[int(search_pos[1])][int(search_pos[0])][::-1]]
+        change = get_delta_col(search_color, current_color)
+
+        image = cv2.circle(frame, search_pos, 5, inverted_color, 1)
+        frame = cv2.putText(frame, f'Change: {change}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+
         cv2.imshow('Timelapse on-going', frame)
 
-        current_color = [int(i) for i in frame[int(search_pos[0])][int(search_pos[1])]]
-        if is_in_pos(search_color, current_color, sensitivity):
+        if change < sensitivity**2:
             if not frame_lock:
                 print(f'{time()} | Starting to take picture')
                 await_time = time() + picture_delay
@@ -76,8 +83,8 @@ def timelapse_worker(sensitivity, picture_delay):
 
         if await_time != -1 and time() > await_time:
             save_frame(frame, frame_count, cwdir)
-            frame_count += 1
 
+            frame_count += 1
             await_time = -1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -92,3 +99,32 @@ def begin_timelapse(sensitivity, picture_delay):
                         args=(sensitivity, picture_delay,))
     new_thread.daemon = True
     new_thread.start()
+
+def viewer():
+    search_color, search_pos = load_settings()
+
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+    while True:
+        _, frame = cap.read()
+
+        current_color = [int(i) for i in frame[int(search_pos[1])][int(search_pos[0])][::-1]]
+        change = get_delta_col(search_color, current_color)
+
+        frame = cv2.putText(frame, f'Change: {change}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Sample Col: {current_color}', (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Sample Col: {search_color}', (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.circle(frame, search_pos, 5, (0, 0, 0), 1)
+
+        cx = int(640 / 2) ; cy = int(480 / 2)
+        cs = 50
+        frame = cv2.line(frame, (cx - cs, cy), (cx + cs, cy), (0, 0, 0), 1)
+        frame = cv2.line(frame, (cx, cy - cs), (cx, cy + cs), (0, 0, 0), 1)
+
+        cv2.imshow('Viewer', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()

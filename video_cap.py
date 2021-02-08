@@ -245,3 +245,54 @@ def viewer(sensitivity, preview_res):
     # destroy all windows
     cap.release()
     cv2.destroyAllWindows()
+
+
+def timelapse_worker(preview_res, img_res, frame_await, total_seconds_elapse):
+    start_time = time()
+    end_time = time() + total_seconds_elapse
+
+    next_frame = time() + frame_await
+    frame_count = 0
+
+    # check if default path exists
+    if not os.path.exists('Timelapses/'):
+        # create if not
+        os.mkdir('Timelapses')
+
+    # save the current working directory
+    cwdir = f'Timelapses/Timelapse-{int(time())}'
+    os.mkdir(cwdir)
+
+    width, height = preview_res
+    cap = create_cap(preview_res)
+
+    while True:
+        # capture a frame
+        _, frame = cap.read()
+
+        # display frame
+        cv2.imshow('Timelapse on-going', frame)
+
+        if time() > next_frame:
+            print_stamped('Starting to capture frame')
+            save_frame(cap, frame_count, cwdir, preview_res, img_res)
+            next_frame = time() + frame_await
+            frame_count += 1
+
+        if time() > end_time:
+            break
+
+        # await a Q press
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # destroy all windows
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+def begin_timelapse(preview_resm, img_res, frame_await, total_seconds_elapse):
+    new_thread = Thread(target=timelapse_worker,
+                        args=(preview_resm, img_res, frame_await, total_seconds_elapse,))
+    new_thread.daemon = True
+    new_thread.start()

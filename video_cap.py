@@ -68,7 +68,6 @@ def timelapse_worker(sensitivity, picture_delay):
         change = get_delta_col(search_color, current_color)
 
         image = cv2.circle(frame, search_pos, 5, inverted_color, 1)
-        frame = cv2.putText(frame, f'Change: {change}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
 
         cv2.imshow('Timelapse on-going', frame)
 

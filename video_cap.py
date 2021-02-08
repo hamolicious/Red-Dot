@@ -111,7 +111,7 @@ def viewer():
         current_color = [int(i) for i in frame[int(search_pos[1])][int(search_pos[0])][::-1]]
         change = get_delta_col(search_color, current_color)
 
-        frame = cv2.putText(frame, f'Change: {change}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
+        frame = cv2.putText(frame, f'Change: {int(sqrt(change))}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
         frame = cv2.putText(frame, f'Sample Col: {current_color}', (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
         frame = cv2.putText(frame, f'Sample Col: {search_color}', (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (51, 70, 51), 2)
         frame = cv2.circle(frame, search_pos, 5, (0, 0, 0), 1)

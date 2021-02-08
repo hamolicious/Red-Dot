@@ -70,6 +70,7 @@ def load_settings():
         settings = json.load(open('save_files/settings.json', 'r'))
     except FileNotFoundError:
         json.dump({}, open('save_files/settings.json', 'w'))
+        save_settings()
         return
 
     set_value('xPos', settings.get('searchPos')[0])

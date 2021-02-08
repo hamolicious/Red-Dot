@@ -82,7 +82,7 @@ def load_settings():
 
 
 def kill():
-    sys.quit()
+    sys.exit(0)
 
 
 load_settings()

@@ -8,3 +8,4 @@ main.spec
 save_files/
 gcode_gen.py
 dummy.gcode
+frames_player.py

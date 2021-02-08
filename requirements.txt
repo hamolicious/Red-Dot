@@ -1,0 +1,4 @@
+colorama==0.4.4
+dearpygui==0.6.166
+numpy==1.19.3
+opencv-python==4.4.0.46

@@ -1,6 +1,6 @@
 from dearpygui.core import *
 from dearpygui.simple import *
-from video_cap import get_image, begin_timelapse, begin_viewer
+from video_cap import get_image, begin_red_dot_timelapse, begin_viewer
 import cv2
 import json
 import os
@@ -57,12 +57,12 @@ def sample_color():
     modify_draw_command('colourDisplayer', 'rect##dynamic', fill=colour)
 
 
-def start_timelapse():
+def start_red_dot_timelapse():
     """
     start the timelapse in video_cap.py
     """
 
-    begin_timelapse(get_value('sensitivity'), get_value('pictureDelay'), get_value('tupleprevRes'), get_value('tupleimgRes'))
+    begin_red_dot_timelapse(get_value('sensitivity'), get_value('pictureDelay'), get_value('tupleprevRes'), get_value('tupleimgRes'))
 
 
 def start_viewer():
@@ -171,7 +171,7 @@ with window('Timelapse', width=600, height=200):
     """
     set_window_pos('Timelapse', 650, 10)
 
-    add_button('startRedDot', label='Start Red Dot', callback=start_timelapse,
+    add_button('startRedDot', label='Start Red Dot', callback=start_red_dot_timelapse,
                tip='Start the red-dot searching timelapse with current settings')
     add_button('startViewer', label='Start Viewer', callback=start_viewer,
                tip='Start the viewer, used to calibrate sensitivity')

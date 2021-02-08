@@ -3,8 +3,27 @@ import cv2
 import json
 from threading import Thread
 import os
-from time import time
+from time import time, gmtime
 from math import sqrt
+from colorama import Fore, init
+
+init()
+
+
+class TimeSave:
+    last_stamp = -1
+
+
+def print_stamped(text):
+    time_stamp = gmtime(time())
+
+    if not TimeSave.last_stamp is -1:
+        delta_time = round(time() - TimeSave.last_stamp, 3)
+    else:
+        delta_time = 'N/A'
+
+    print(f'{time_stamp.tm_hour}:{time_stamp.tm_min}:{time_stamp.tm_sec} | {Fore.GREEN + text + Fore.RESET} | Time since last report {delta_time} seconds')
+    TimeSave.last_stamp = time()
 
 
 def get_image():
@@ -27,7 +46,7 @@ def load_settings():
     try:
         settings = json.load(open('save_files/settings.json', 'r'))
     except FileNotFoundError:
-        print('Settings file not found')
+        print_stamped('Settings file not found')
         return
 
     search_pos = settings.get('searchPos')
@@ -67,7 +86,7 @@ def save_frame(cap, frame_count, directory, preview_res, img_res):
     filepath = os.path.join(directory, f'frame-{frame_count:05}.png')
     cv2.imwrite(filepath, frame)
 
-    print(f'{time()} | Saved: {filepath}')
+    print_stamped(f'Saved: {filepath}')
 
 
 def create_cap(res):
@@ -78,7 +97,7 @@ def create_cap(res):
     return cap
 
 
-def timelapse_worker(sensitivity, picture_delay, preview_res, img_res):
+def red_dot_timelapse_worker(sensitivity, picture_delay, preview_res, img_res):
     """
     main timelapse thread
     """
@@ -127,7 +146,7 @@ def timelapse_worker(sensitivity, picture_delay, preview_res, img_res):
             # see if already capturing a frame
             if not frame_lock:
                 # display the begining of a capture
-                print(f'{time()} | Starting to take picture')
+                print_stamped('Starting to take picture')
                 # set an await time to allow the printer to move into position
                 await_time = time() + picture_delay
                 # update the search colour to accomidate slight lighting changes over time
@@ -158,14 +177,15 @@ def timelapse_worker(sensitivity, picture_delay, preview_res, img_res):
     cv2.destroyAllWindows()
 
 
-def begin_timelapse(sensitivity, picture_delay, preview_res, img_res):
+def begin_red_dot_timelapse(sensitivity, picture_delay, preview_res, img_res):
     """
     begins a new timelapse thread
     """
-    new_thread = Thread(target=timelapse_worker,
+    new_thread = Thread(target=red_dot_timelapse_worker,
                         args=(sensitivity, picture_delay, preview_res, img_res,))
     new_thread.daemon = True
     new_thread.start()
+
 
 def begin_viewer(sensitivity, preview_res):
     """
@@ -209,7 +229,7 @@ def viewer(sensitivity, preview_res):
         frame = cv2.circle(frame, search_pos, 5, (0, 0, 0), 1)
 
         # draw a crosshair to ease aligning to center of bed
-        cx = int(width  / 2)
+        cx = int(width / 2)
         cy = int(height / 2)
         cs = 50
         frame = cv2.line(frame, (cx - cs, cy), (cx + cs, cy), (0, 0, 0), 1)

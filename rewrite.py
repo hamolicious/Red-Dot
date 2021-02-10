@@ -9,8 +9,6 @@ from time import time, gmtime
 from threading import Thread
 from math import sqrt
 
-from video_cap import get_image, begin_red_dot_timelapse, begin_viewer, begin_timelapse
-
 #region funcs
 
 

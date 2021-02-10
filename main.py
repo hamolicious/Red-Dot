@@ -115,7 +115,6 @@ class Camera:
     def red_dot(self):
         new_thread = Thread(target=self.red_dot_worker)
         new_thread.daemon = True
-        self.app.create_logger()
         new_thread.start()
 
     def red_dot_worker(self):
@@ -146,13 +145,13 @@ class Camera:
                 await_time = -1
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                self.app.remove_logger()
                 break
+        
+        cv2.destroyAllWindows()
 
     def viewer(self):
         new_thread = Thread(target=self.viewer_worker)
         new_thread.daemon = True
-        self.app.create_logger()
         new_thread.start()
 
     def viewer_worker(self):
@@ -190,13 +189,13 @@ class Camera:
 
             # await a Q press
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                self.app.remove_logger()
                 break
+
+        cv2.destroyAllWindows()
 
     def timed(self):
         new_thread = Thread(target=self.timed_worker)
         new_thread.daemon = True
-        self.app.create_logger()
         new_thread.start()
 
     def timed_worker(self):
@@ -227,7 +226,7 @@ class Camera:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        self.app.remove_logger()
+        cv2.destroyAllWindows()
 
 
 class App:
@@ -253,6 +252,7 @@ class App:
         self.create_timed_settings_win()
         self.create_path_settings_win()
         self.create_theme_win()
+        self.create_logger_win()
 
         self.create_preview()
 
@@ -354,11 +354,13 @@ class App:
         show_ttl_win = lambda : show_item('win_ttlSettings')
         show_path_win = lambda : show_item('win_pathSettings')
         show_theme_win = lambda : show_item('win_themes')
+        show_logger_win = lambda : show_item('win_logger')
 
         with window('win_mainMenu', label='Main Menu', x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
             add_button('showTimelapsesWin', label='Timelapses', width=self.main_menu_btn_width, callback=show_timelapses_win, tip='Show the Timelapses window')
             add_button('showRDWin', label='Red Dot Settings', width=self.main_menu_btn_width, callback=show_rd_win, tip='Show the Red-Dot settings window')
             add_button('showTTLWin', label='Timed Time-lapse Settings', width=self.main_menu_btn_width, callback=show_ttl_win, tip='Show the Timed Timelapse settings window')
+            add_button('showLoggerWin', label='Logger', width=self.main_menu_btn_width, callback=show_logger_win, tip='Show the logger')
             add_button('showPathsWin', label='Path Settings', width=self.main_menu_btn_width, callback=show_path_win, tip='Show the path settings window')
             add_button('showThemesWin', label='Themes', width=self.main_menu_btn_width, callback=show_theme_win, tip='Show the theme selection window')
 
@@ -472,13 +474,10 @@ class App:
             add_button('btn_gold_theme', label='Gold', width=btn_width, callback=gold_theme)
             add_button('btn_purple_theme', label='Purple', width=btn_width, callback=purple_theme)
 
-
-    def create_logger(self):
-        with window('win_logger', label='Log', autosize=True, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
+    def create_logger_win(self):
+        with window('win_logger', label='Log', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
             add_logger('reportLogger', width=600, autosize_y=True)
-    
-    def remove_logger(self):
-        delete_item('win_logger')
+
 
     def create_preview(self):
         with window('imgPreview', label='Image Preview', autosize=True, show=False, x_pos=0, y_pos=0):

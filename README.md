@@ -16,3 +16,12 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - Click sample colour and save the settings
 - In your slicer, turn on the time-lapse mode (in Cura its under Post Procesing Plugins)
 - Launch the red-dot timelapse and start the print
+
+---
+
+<p align="center">
+<br>
+<a href="https://www.buymeacoffee.com/hamolicious">
+<img src="https://github.com/appcraftstudio/buymeacoffee/raw/master/Images/snapshot-bmc-button.png" width="300">
+</a>
+</p>

@@ -291,8 +291,8 @@ def timelapse_worker(preview_res, img_res, frame_await, total_seconds_elapse):
     cv2.destroyAllWindows()
 
 
-def begin_timelapse(preview_resm, img_res, frame_await, total_seconds_elapse):
+def begin_timelapse(preview_res, img_res, frame_await, total_seconds_elapse):
     new_thread = Thread(target=timelapse_worker,
-                        args=(preview_resm, img_res, frame_await, total_seconds_elapse,))
+                        args=(preview_res, img_res, frame_await, total_seconds_elapse,))
     new_thread.daemon = True
     new_thread.start()

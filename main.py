@@ -224,6 +224,8 @@ class App:
         self.create_defaults()
         self.load_settings()
 
+        set_theme(get_value('txt_theme'))
+
         self.camera = Camera()
 
         self.create_main_menu()
@@ -231,6 +233,7 @@ class App:
         self.create_red_dot_settings_win()
         self.create_timed_settings_win()
         self.create_path_settings_win()
+        self.create_theme_win()
 
         self.create_preview()
 
@@ -259,6 +262,8 @@ class App:
 
         add_value('txt_timelapseSavePath', self.default_timelapse_path)
         add_value('txt_frameName', self.default_frame_name)
+
+        add_value('txt_theme', 'Default')
 
     def load_settings(self):
         """
@@ -292,6 +297,8 @@ class App:
         set_value('txt_timelapseSavePath', settings.get('txt_timelapseSavePath'))
         set_value('txt_frameName', settings.get('txt_frameName'))
 
+        set_value('txt_theme', settings.get('txt_theme'))
+
     def save_settings(self):
         """
         saves settings to a json file
@@ -312,6 +319,7 @@ class App:
             "tupleimgRes": get_value('tupleimgRes'),
             "txt_timelapseSavePath": get_value('txt_timelapseSavePath'),
             "txt_frameName": get_value('txt_frameName'),
+            "txt_theme": get_value('txt_theme'),
         }
         json.dump(settings, open('save_files/settings.json', 'w'))
 
@@ -325,12 +333,14 @@ class App:
         show_rd_win = lambda : show_item('win_redDotSettings')
         show_ttl_win = lambda : show_item('win_ttlSettings')
         show_path_win = lambda : show_item('win_pathSettings')
+        show_theme_win = lambda : show_item('win_themes')
 
         with window('win_mainMenu', label='Main Menu', x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
             add_button('showTimelapsesWin', label='Timelapses', width=self.main_menu_btn_width, callback=show_timelapses_win, tip='Show the Timelapses window')
             add_button('showRDWin', label='Red Dot Settings', width=self.main_menu_btn_width, callback=show_rd_win, tip='Show the Red-Dot settings window')
             add_button('showTTLWin', label='Timed Time-lapse Settings', width=self.main_menu_btn_width, callback=show_ttl_win, tip='Show the Timed Timelapse settings window')
             add_button('showPathsWin', label='Path Settings', width=self.main_menu_btn_width, callback=show_path_win, tip='Show the path settings window')
+            add_button('showThemesWin', label='Themes', width=self.main_menu_btn_width, callback=show_theme_win, tip='Show the theme selection window')
 
             add_dummy(height=50)
             add_button('saveButton', label='Save Settings', width=self.main_menu_btn_width, callback=self.save_settings, tip='Save all current settings')
@@ -391,6 +401,36 @@ class App:
         with window('win_pathSettings', label='Path Settings', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
             add_input_text('settingsSavePathInp', label='Timelapse Frames Save Path', source='txt_timelapseSavePath', tip='The directory where the generated timelapse frames will be saved to')
             add_input_text('frameNamingConventionInp', label='Frame Names', source='txt_frameName', tip='The name of frames, use # to substitute a numbering system\nfor example: "frame-####.png" will be saved as "frame-0000.png"')
+
+    def create_theme_win(self):
+        def dark_theme():
+            set_theme('Dark')
+            set_value('txt_theme', 'Dark')
+        def light_theme():
+            set_theme('Light')
+            set_value('txt_theme', 'Light')
+        def classic_theme():
+            set_theme('Classic')
+            set_value('txt_theme', 'Classic')
+        def purple_theme():
+            set_theme('Purple')
+            set_value('txt_theme', 'Purple')
+        def gold_theme():
+            set_theme('Gold')
+            set_value('txt_theme', 'Gold')
+        def red_theme():
+            set_theme('Red')
+            set_value('txt_theme', 'Red')
+
+        btn_width = 100
+
+        with window('win_themes', label='Themes', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
+            add_button('Dark', width=btn_width, callback=dark_theme)
+            add_button('Light', width=btn_width, callback=light_theme)
+            add_button('Classic', width=btn_width, callback=classic_theme)
+            add_button('Purple', width=btn_width, callback=purple_theme)
+            add_button('Gold', width=btn_width, callback=gold_theme)
+            add_button('Red', width=btn_width, callback=red_theme)
 
 
     def create_preview(self):

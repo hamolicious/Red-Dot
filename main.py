@@ -6,8 +6,7 @@ import json
 import os
 import sys
 
-from os import system
-system('cls')
+os.system('cls')
 
 
 def update_image():

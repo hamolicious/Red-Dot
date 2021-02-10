@@ -4,20 +4,13 @@ import cv2
 import json
 import os
 import sys
-from colorama import Fore, init
 from time import time, gmtime
 from threading import Thread
 from math import sqrt
 
-def print_stamped(text, last_stamp=-1):
+def print_stamped(text):
     time_stamp = gmtime(time())
-
-    if last_stamp != -1:
-        delta_time = f' | Time since last report {round(time() - last_stamp, 3)} seconds'
-    else:
-        delta_time = ''
-
-    print(f'{time_stamp.tm_hour:02}:{time_stamp.tm_min:02}:{time_stamp.tm_sec:02} | {Fore.GREEN + text + Fore.RESET}' + delta_time)
+    log_info(text, logger='reportLogger')
 
 class Camera:
     def __init__(self):
@@ -108,6 +101,7 @@ class Camera:
     def red_dot(self):
         new_thread = Thread(target=self.red_dot_worker)
         new_thread.daemon = True
+        app.create_logger()
         new_thread.start()
 
     def red_dot_worker(self):
@@ -138,11 +132,13 @@ class Camera:
                 await_time = -1
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                app.remove_logger()
                 break
 
     def viewer(self):
         new_thread = Thread(target=self.viewer_worker)
         new_thread.daemon = True
+        app.create_logger()
         new_thread.start()
 
     def viewer_worker(self):
@@ -180,11 +176,13 @@ class Camera:
 
             # await a Q press
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                app.remove_logger()
                 break
 
     def timed(self):
         new_thread = Thread(target=self.timed_worker)
         new_thread.daemon = True
+        app.create_logger()
         new_thread.start()
 
     def timed_worker(self):
@@ -214,6 +212,9 @@ class Camera:
             # await a Q press
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
+        app.remove_logger()
+
 
 class App:
     def __init__(self):
@@ -457,6 +458,13 @@ class App:
             add_button('btn_purple_theme', label='Purple', width=btn_width, callback=purple_theme)
 
 
+    def create_logger(self):
+        with window('win_logger', label='Log', autosize=True, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
+            add_logger('reportLogger', width=600, autosize_y=True)
+    
+    def remove_logger(self):
+        delete_item('win_logger')
+
     def create_preview(self):
         with window('imgPreview', label='Image Preview', autosize=True, show=False, x_pos=0, y_pos=0):
             """
@@ -563,8 +571,6 @@ class App:
 
 if __name__ == '__main__':
     os.system('cls')
-
-    init()
 
     app = App()
     app.start()

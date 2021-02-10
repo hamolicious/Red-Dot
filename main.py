@@ -242,6 +242,7 @@ class App:
 
     def start(self):
         set_main_window_size(1000, 600)
+        set_main_window_title('Red-Dot')
         start_dearpygui(primary_window='win_mainMenu')
 
     #region SETTINGS
@@ -406,6 +407,9 @@ class App:
             add_input_text('frameNamingConventionInp', label='Frame Names', source='txt_frameName', tip='The name of frames, use # to substitute a numbering system\nfor example: "frame-####.png" will be saved as "frame-0000.png"')
 
     def create_theme_win(self):
+        def dark2_theme():
+            set_theme('Dark 2')
+            set_value('txt_theme', 'Dark 2')
         def dark_theme():
             set_theme('Dark')
             set_value('txt_theme', 'Dark')
@@ -427,17 +431,30 @@ class App:
         def grey_theme():
             set_theme('Grey')
             set_value('txt_theme', 'Grey')
+        def dark_grey_theme():
+            set_theme('Dark Grey')
+            set_value('txt_theme', 'Dark Grey')
+        def cherry_theme():
+            set_theme('Cherry')
+            set_value('txt_theme', 'Cherry')
 
         btn_width = 100
 
         with window('win_themes', label='Themes', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
-            add_button('btn_dark_theme', label='Dark', width=btn_width, callback=dark_theme)
-            add_button('btn_light_theme', label='Light', width=btn_width, callback=light_theme)
             add_button('btn_classic_theme', label='Classic', width=btn_width, callback=classic_theme)
-            add_button('btn_purple_theme', label='Purple', width=btn_width, callback=purple_theme)
-            add_button('btn_gold_theme', label='Gold', width=btn_width, callback=gold_theme)
-            add_button('btn_red_theme', label='Red', width=btn_width, callback=red_theme)
+
+            add_button('btn_dark_theme', label='Dark', width=btn_width, callback=dark_theme)
+            add_button('btn_dark2_theme', label='Dark 2', width=btn_width, callback=dark2_theme)
+
+            add_button('btn_dark_grey_theme', label='Dark Grey', width=btn_width, callback=dark_grey_theme)
             add_button('btn_grey_theme', label='Grey', width=btn_width, callback=grey_theme)
+
+            add_button('btn_light_theme', label='Light', width=btn_width, callback=light_theme)
+
+            add_button('btn_red_theme', label='Red', width=btn_width, callback=red_theme)
+            add_button('btn_cherry_theme', label='Cherry', width=btn_width, callback=cherry_theme)
+            add_button('btn_gold_theme', label='Gold', width=btn_width, callback=gold_theme)
+            add_button('btn_purple_theme', label='Purple', width=btn_width, callback=purple_theme)
 
 
     def create_preview(self):

@@ -224,6 +224,7 @@ class App:
         self.default_timelapse_path = 'Timelapses/'
         self.default_frame_name = 'frame-####.png'
 
+        self.create_default_paths()
         self.create_defaults()
         self.load_settings()
 
@@ -566,6 +567,10 @@ class App:
         if len(path.split('.')) < 2:
             set_value('txt_frameName', self.default_frame_name)
             self.create_error('Not a valid name', f'Please make sure that the name has an extension\n"{path}"')
+
+    def create_default_paths(self):
+        if not os.path.exists(self.default_timelapse_path):
+            os.mkdir(self.default_timelapse_path)
 
     #endregion
 

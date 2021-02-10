@@ -12,7 +12,7 @@ from math import sqrt
 def print_stamped(text, last_stamp=-1):
     time_stamp = gmtime(time())
 
-    if not last_stamp is -1:
+    if last_stamp != -1:
         delta_time = f' | Time since last report {round(time() - last_stamp, 3)} seconds'
     else:
         delta_time = ''
@@ -220,7 +220,7 @@ class App:
 
         self.default_timelapse_path = 'Timelapses/'
         self.default_frame_name = 'frame-####.png'
-        
+
         self.create_defaults()
         self.load_settings()
 
@@ -314,6 +314,8 @@ class App:
             "txt_frameName": get_value('txt_frameName'),
         }
         json.dump(settings, open('save_files/settings.json', 'w'))
+
+        self.unsaved_changes = False
 
     #endregion
 
@@ -460,7 +462,7 @@ class App:
         Samples the colour defined by the circle
         """
 
-        # read the image
+       # read the image
         img = cv2.imread('save_files/out.jpg', cv2.IMREAD_COLOR)
 
         # fetch and convert the position values

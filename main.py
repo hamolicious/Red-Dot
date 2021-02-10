@@ -227,6 +227,7 @@ class App:
         set_theme(get_value('txt_theme'))
 
         self.camera = Camera()
+        self.camera.create_dir()
 
         self.create_main_menu()
         self.create_timelapses_win()
@@ -421,16 +422,20 @@ class App:
         def red_theme():
             set_theme('Red')
             set_value('txt_theme', 'Red')
+        def grey_theme():
+            set_theme('Grey')
+            set_value('txt_theme', 'Grey')
 
         btn_width = 100
 
         with window('win_themes', label='Themes', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
-            add_button('Dark', width=btn_width, callback=dark_theme)
-            add_button('Light', width=btn_width, callback=light_theme)
-            add_button('Classic', width=btn_width, callback=classic_theme)
-            add_button('Purple', width=btn_width, callback=purple_theme)
-            add_button('Gold', width=btn_width, callback=gold_theme)
-            add_button('Red', width=btn_width, callback=red_theme)
+            add_button('btn_dark_theme', label='Dark', width=btn_width, callback=dark_theme)
+            add_button('btn_light_theme', label='Light', width=btn_width, callback=light_theme)
+            add_button('btn_classic_theme', label='Classic', width=btn_width, callback=classic_theme)
+            add_button('btn_purple_theme', label='Purple', width=btn_width, callback=purple_theme)
+            add_button('btn_gold_theme', label='Gold', width=btn_width, callback=gold_theme)
+            add_button('btn_red_theme', label='Red', width=btn_width, callback=red_theme)
+            add_button('btn_grey_theme', label='Grey', width=btn_width, callback=grey_theme)
 
 
     def create_preview(self):

@@ -6,7 +6,7 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - [x] Increase the resolution from 640x480 to at least HD
 - [x] Increase the customisability of the software such as paths and themes
 - [x] Add a normal timelapse feature
-- [ ] Add live preview to the main screen
+- [ ] ~~Add live preview to the main screen~~ (will have to be postponed due to library limitations)
 
 ## Instructions:
 - Find something small that you can attach to the bed that is a different colour, I used a red label and cut a circle out of it
@@ -16,3 +16,12 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - Click sample colour and save the settings
 - In your slicer, turn on the time-lapse mode (in Cura its under Post Procesing Plugins)
 - Launch the red-dot timelapse and start the print
+
+---
+
+<p align="center">
+<br>
+<a href="https://www.buymeacoffee.com/hamolicious">
+<img src="https://github.com/appcraftstudio/buymeacoffee/raw/master/Images/snapshot-bmc-button.png" width="300">
+</a>
+</p>

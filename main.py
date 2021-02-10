@@ -81,7 +81,9 @@ class Camera:
         """
         saves a still frame from the web cam
         """
-        _, frame = self.cap.read()
+        result, frame = self.cap.read()
+        self.set_resolution(get_value('tupleprevRes'))
+
         cv2.imwrite('save_files/out.jpg', frame)
 
     def get_current_color(self, frame):

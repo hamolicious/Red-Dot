@@ -9,37 +9,6 @@ from time import time, gmtime
 from threading import Thread
 from math import sqrt
 
-#region funcs
-
-
-def start_red_dot_timelapse():
-    """
-    start the timelapse in video_cap.py
-    """
-
-    begin_red_dot_timelapse(get_value('sensitivity'), get_value('pictureDelay'), get_value('tupleprevRes'), get_value('tupleimgRes'))
-
-def start_viewer():
-    """
-    start the viewer in video_cap.py
-    """
-
-    begin_viewer(get_value('sensitivity'), get_value('tupleprevRes'))
-
-def start_timed():
-  # begin_timelapse(preview_resm, img_res, frame_every_sec, total_seconds_elpase)
-
-    hrs, mns, sec = get_value('timeBetweenFrames')
-    frame_wait = (hrs * 60 * 60) + (mns * 60) + sec
-
-    hrs, mns, sec = get_value('totalPrintTime')
-    total_sec = (hrs * 60 * 60) + (mns * 60) + sec
-
-    begin_timelapse(get_value('tupleprevRes'), get_value('tupleimgRes'), frame_wait, total_sec)
-
-
-#endregion
-
 def print_stamped(text, last_stamp=-1):
     time_stamp = gmtime(time())
 

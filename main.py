@@ -13,9 +13,12 @@ def print_stamped(text):
     log_info(text, logger='reportLogger')
 
 class Camera:
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
+
         self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.set_resolution(get_value('tupleprevRes'))
+        self.validate_open()
 
         self.frame_count = 0
         self.last_stamp = -1
@@ -23,6 +26,11 @@ class Camera:
         self.update_search_settings()
 
         self.cwd = ''
+
+    def validate_open(self):
+        if not self.cap.isOpened():
+            self.app.create_camera_error('Camera already in use', 'Make sure the camera is not being used by any other programs')
+            self.cap.release()
 
     def update_search_settings(self):
         self.search_color = get_value('sampledColor')
@@ -60,6 +68,9 @@ class Camera:
         return frame_name
 
     def capture_frame(self):
+        if not self.cap.isOpened():
+            return
+
         self.set_resolution(get_value('tupleimgRes'))
         _, frame = self.cap.read()
         self.set_resolution(get_value('tupleprevRes'))
@@ -74,6 +85,9 @@ class Camera:
         """
         saves a still frame from the web cam
         """
+        if not self.cap.isOpened():
+            return
+
         result, frame = self.cap.read()
         self.set_resolution(get_value('tupleprevRes'))
 
@@ -101,7 +115,7 @@ class Camera:
     def red_dot(self):
         new_thread = Thread(target=self.red_dot_worker)
         new_thread.daemon = True
-        app.create_logger()
+        self.app.create_logger()
         new_thread.start()
 
     def red_dot_worker(self):
@@ -132,13 +146,13 @@ class Camera:
                 await_time = -1
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                app.remove_logger()
+                self.app.remove_logger()
                 break
 
     def viewer(self):
         new_thread = Thread(target=self.viewer_worker)
         new_thread.daemon = True
-        app.create_logger()
+        self.app.create_logger()
         new_thread.start()
 
     def viewer_worker(self):
@@ -176,13 +190,13 @@ class Camera:
 
             # await a Q press
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                app.remove_logger()
+                self.app.remove_logger()
                 break
 
     def timed(self):
         new_thread = Thread(target=self.timed_worker)
         new_thread.daemon = True
-        app.create_logger()
+        self.app.create_logger()
         new_thread.start()
 
     def timed_worker(self):
@@ -213,7 +227,7 @@ class Camera:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        app.remove_logger()
+        self.app.remove_logger()
 
 
 class App:
@@ -230,7 +244,7 @@ class App:
 
         set_theme(get_value('txt_theme'))
 
-        self.camera = Camera()
+        self.camera = Camera(self)
         self.camera.create_dir()
 
         self.create_main_menu()
@@ -480,6 +494,17 @@ class App:
         delete_error_win = lambda : delete_item('win_error')
         with window('win_error', label=label, show=True, autosize=True, on_close=delete_error_win):
             add_text('errorText', default_value=text)
+
+    def create_camera_error(self, label, text):
+        delete_error_win = lambda : delete_item('win_cam_error')
+
+        def reinstantiate_camera():
+            delete_error_win()
+            self.camera = Camera(self)
+
+        with window('win_cam_error', label=label, show=True, autosize=True, on_close=delete_error_win):
+            add_text('errorText', default_value=text)
+            add_button('btn_restartCam', label='Retry Camera', callback=reinstantiate_camera, tip='Try restarting the camera (make sure no other apps are trying to access the camera)')
 
     #endregion
 

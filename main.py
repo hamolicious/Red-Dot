@@ -43,12 +43,35 @@ class Camera:
     def reset_frame_count(self):
         self.frame_count = 0
 
+    def name_frame(self):
+        frame_name = get_value('txt_frameName')
+        n_zeros = frame_name.count('#')
+
+        current_count = str(self.frame_count)
+
+        if n_zeros != 0:
+            d_zeros = n_zeros - len(current_count)
+
+            if d_zeros >= 0:
+                num = ('0'*d_zeros) + current_count
+            else:
+                num = current_count
+        
+            name, ext = frame_name.split('.')
+            name = name.replace('#'*n_zeros, num)
+            frame_name = name + '.' + ext
+        else:
+            name, ext = frame_name.split('.')
+            frame_name = name + current_count + '.' + ext
+
+        return frame_name
+
     def capture_frame(self):
         self.set_resolution(get_value('tupleimgRes'))
         _, frame = self.cap.read()
         self.set_resolution(get_value('tupleprevRes'))
 
-        filepath = os.path.join(self.cwd, f'frame-{self.frame_count:05}.png')
+        filepath = os.path.join(self.cwd, self.name_frame())
         cv2.imwrite(filepath, frame)
 
         self.frame_count += 1
@@ -68,10 +91,11 @@ class Camera:
         return int(sum((abs(current_color[0] - self.search_color[0]), abs(current_color[1] - self.search_color[1]), abs(current_color[2] - self.search_color[2]))))
 
     def create_dir(self):
-        if not os.path.exists('Timelapses/'):
-            os.mkdir('Timelapses/')
+        path = get_value('txt_timelapseSavePath')
+        if not os.path.exists(path):
+            os.mkdir(path)
         
-        self.cwd = f'Timelapses/Timelapse-{int(time())}'
+        self.cwd = os.path.join(path, f'Timelapse-{int(time())}/')
         os.mkdir(self.cwd)
 
     def hms_to_sec(self, hhmmss):
@@ -193,6 +217,9 @@ class App:
     def __init__(self):
         self.main_menu_btn_width = 300
         self.win_pos = (350, 50)
+
+        self.default_timelapse_path = 'Timelapses/'
+        self.default_frame_name = 'frame-####.png'
         
         self.create_defaults()
         self.load_settings()
@@ -203,6 +230,7 @@ class App:
         self.create_timelapses_win()
         self.create_red_dot_settings_win()
         self.create_timed_settings_win()
+        self.create_path_settings_win()
 
         self.create_preview()
 
@@ -229,6 +257,9 @@ class App:
         add_value('totalPrintTime', [0,0,0])
         add_value('calculatedInfo', '')
 
+        add_value('txt_timelapseSavePath', self.default_timelapse_path)
+        add_value('txt_frameName', self.default_frame_name)
+
     def load_settings(self):
         """
         loads the settings file (if exists) else creates the file and sets default values
@@ -244,7 +275,7 @@ class App:
         else:
             # else create the file and fill it with default settings
             json.dump({}, open('save_files/settings.json', 'w'))
-            save_settings()
+            self.save_settings()
             return
 
         # if file loaded, fill out the memory with settings
@@ -258,11 +289,19 @@ class App:
         set_value('tupleprevRes', settings.get('tupleprevRes'))
         set_value('tupleimgRes', settings.get('tupleimgRes'))
 
+        set_value('txt_timelapseSavePath', settings.get('txt_timelapseSavePath'))
+        set_value('txt_frameName', settings.get('txt_frameName'))
+
     def save_settings(self):
         """
         saves settings to a json file
         """
-        self.camera.update_search_settings()
+        self.check_paths()
+
+        try:
+            self.camera.update_search_settings()
+        except AttributeError:
+            pass
 
         settings = {
             "searchPos": [get_value('xPos'), get_value('yPos')],
@@ -271,6 +310,8 @@ class App:
             "pictureDelay": get_value('pictureDelay'),
             "tupleprevRes": get_value('tupleprevRes'),
             "tupleimgRes": get_value('tupleimgRes'),
+            "txt_timelapseSavePath": get_value('txt_timelapseSavePath'),
+            "txt_frameName": get_value('txt_frameName'),
         }
         json.dump(settings, open('save_files/settings.json', 'w'))
 
@@ -281,11 +322,13 @@ class App:
         show_timelapses_win = lambda : show_item('win_timelapses')
         show_rd_win = lambda : show_item('win_redDotSettings')
         show_ttl_win = lambda : show_item('win_ttlSettings')
+        show_path_win = lambda : show_item('win_pathSettings')
 
         with window('win_mainMenu', label='Main Menu', x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
             add_button('showTimelapsesWin', label='Timelapses', width=self.main_menu_btn_width, callback=show_timelapses_win, tip='Show the Timelapses window')
-            add_button('showRDWin', label='Red Dot Settings', width=self.main_menu_btn_width, callback=show_rd_win, tip='Show the Red-Dot settings')
-            add_button('showTTLWin', label='Timed Time-lapse Settings', width=self.main_menu_btn_width, callback=show_ttl_win, tip='Show the Timed Timelapse settings')
+            add_button('showRDWin', label='Red Dot Settings', width=self.main_menu_btn_width, callback=show_rd_win, tip='Show the Red-Dot settings window')
+            add_button('showTTLWin', label='Timed Time-lapse Settings', width=self.main_menu_btn_width, callback=show_ttl_win, tip='Show the Timed Timelapse settings window')
+            add_button('showPathsWin', label='Path Settings', width=self.main_menu_btn_width, callback=show_path_win, tip='Show the path settings window')
 
             add_dummy(height=50)
             add_button('saveButton', label='Save Settings', width=self.main_menu_btn_width, callback=self.save_settings, tip='Save all current settings')
@@ -309,7 +352,7 @@ class App:
     def create_red_dot_settings_win(self):
         show_imgprev_win = lambda : show_item('imgPreview')
 
-        with window('win_redDotSettings', label='Red Dot Settings', show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1], width=450, height=250):
+        with window('win_redDotSettings', label='Red Dot Settings', show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1], width=450, height=250, no_resize=True):
             """
             recognition settings
             """
@@ -342,6 +385,11 @@ class App:
             add_input_int3('timeBetweenFrames', label='Time Between Frames', source='timeBetweenFrames', callback=self.calculate_per_print, tip='Time to wait between each frame HH:MM:SS')
             add_text('timelapseInfoText', default_value='', source='calculatedInfo')
 
+    def create_path_settings_win(self):
+        with window('win_pathSettings', label='Path Settings', autosize=True, show=False, x_pos=self.win_pos[0], y_pos=self.win_pos[1]):
+            add_input_text('settingsSavePathInp', label='Timelapse Frames Save Path', source='txt_timelapseSavePath', tip='The directory where the generated timelapse frames will be saved to')
+            add_input_text('frameNamingConventionInp', label='Frame Names', source='txt_frameName', tip='The name of frames, use # to substitute a numbering system\nfor example: "frame-####.png" will be saved as "frame-0000.png"')
+
 
     def create_preview(self):
         with window('imgPreview', label='Image Preview', autosize=True, show=False, x_pos=0, y_pos=0):
@@ -353,8 +401,14 @@ class App:
             add_drawing('draw_prevImage', width=640, height=480)
             self.update_preview_image()
 
+    def create_error(self, label, text):
+        delete_error_win = lambda : delete_item('win_error')
+        with window('win_error', label=label, show=True, autosize=True, on_close=delete_error_win):
+            add_text('errorText', default_value=text)
+
     #endregion
 
+    #region METHODS
     def kill(self):
         """
         kills the program
@@ -428,6 +482,18 @@ class App:
         cv2.destroyAllWindows()
         os.remove('save_files/out.jpg')
 
+    def check_paths(self):
+        path = get_value('txt_timelapseSavePath')
+        if not os.path.exists(path) or not os.path.isdir(path):
+            set_value('txt_timelapseSavePath', self.default_timelapse_path)
+            self.create_error('Path does not exist', f'Please make sure that the path exists and is valid\n"{path}"')
+
+        path = get_value('txt_frameName')
+        if len(path.split('.')) < 2:
+            set_value('txt_frameName', self.default_frame_name)
+            self.create_error('Not a valid name', f'Please make sure that the name has an extension\n"{path}"')
+
+    #endregion
 
 if __name__ == '__main__':
     os.system('cls')

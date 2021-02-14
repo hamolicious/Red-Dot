@@ -181,8 +181,8 @@ class Camera:
 
             self.text_y = start_text_y
             frame = put_text(f'Change: {int(sqrt(change))} | Sensitivity: {get_value("sensitivity")}', frame)
-            frame = put_text(f'Sample Col: {current_color}', frame)
-            frame = put_text(f'Sample Col: {self.search_color}', frame)
+            frame = put_text(f'Current Col: {current_color}', frame)
+            frame = put_text(f'Sample Col : {self.search_color}', frame)
             frame = cv2.circle(frame, (self.search_pos_x, self.search_pos_y), 5, (0, 0, 0), 2)
 
             cv2.imshow('Viewer', frame)

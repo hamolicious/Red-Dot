@@ -2,21 +2,48 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset='UTF-8'>
     <title>Red-Dot</title>
-    <link rel="stylesheet" href="index.css">
 
-    <script defer src="render.js"></script>
+    <link rel='stylesheet' href='index.css'>
+    <link rel='stylesheet' href='tabs.css'>
+
+    <script defer src='render.js'></script>
+    <script defer src='tabController.js'></script>
 </head>
 
 <body>
-    <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
-    <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
-    <br>
-    <div style="text-align:center;">
-        <input type="button" id="start" value="Start / Shut down camera" />
-    </div>
+    <div class='wrapper'>
+        <div class='cam-preview'>
+            <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
+            <div id='camdemo'></div>
+        </div>
+        <div class='tabs'>
+            <ul class='nav-bar-body'>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('generalSettings')">General Settings</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('timedTimeLapse')">Timed Time Lapse</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('redDotTimeLapse')">Red Dot Time Lapse</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('fiducialTimeLapse')">Fiducial Time Lapse</button></li>
+            </ul>
+            <br>
+            <div id='generalSettings' class='tabSelector'>
+                <h2>General Settings</h2>
+                <p>London is the capital of England.</p>
+            </div>
 
+            <div id='timedTimeLapse' class='tabSelector' style='display:none'>
+                <h2>Timed Time Lapse</h2>
+            </div>
+
+            <div id='redDotTimeLapse' class='tabSelector' style='display:none'>
+                <h2>Red Dot Time Lapse</h2>
+            </div>
+
+            <div id='fiducialTimeLapse' class='tabSelector' style='display:none'>
+                <h2>Fiducial Time Lapse</h2>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

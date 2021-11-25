@@ -1,6 +1,43 @@
+/*
+Text: #c8c3cc
+Complementary Background: #563f46
+Alt Text: #8ca3a3
+Background: #484f4f
+*/
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: auto;
+    max-width: 38rem;
+    padding: 2rem;
+    background-color: #484f4f;
+    color: #c8c3cc;
+}
+
+.wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: inline-grid;
+    gap: 10px;
+    column-count: 5;
+    list-style: none;
+}
+
+.cam-preview {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    text-align: left;
+}
+
+#camdemo {
+    width: 320px;
+    height: 240px;
+}
+
+.tabs {
+    grid-column-start: 2;
+    grid-column-end: 5;
 }

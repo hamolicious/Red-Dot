@@ -28,7 +28,6 @@
 						Time Lapse</button></li>
                 <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('fiducialTimeLapse')">Fiducial Time Lapse</button></li>
             </ul>
-            <br>
             <div id='generalSettings' class='tabSelector'>
                 <h2>General Settings</h2>
                 <table>
@@ -59,14 +58,64 @@
 
             <div id='timedTimeLapse' class='tabSelector' style='display:none'>
                 <h2>Timed Time Lapse</h2>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Print Time in HH:MM (<i>optional</i>):</label>
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Desired Time Lapse Length in HH:MM (<i>optional</i>):</label>
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Time await between frames HH:MM :</label>
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                        <td>
+                            <input type="number" value="0">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- TODO(hamolicious) implement timed time lapse calculations -->
+                            <button>Calculate</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- TODO(hamolicious) implement timed time lapse -->
+                            <button>Start</button>
+                        </td>
+                    </tr>
+                </table>
+
             </div>
 
             <div id='redDotTimeLapse' class='tabSelector' style='display:none'>
                 <h2>Red Dot Time Lapse</h2>
+                <i>Not Yet Implemented</i>
             </div>
 
             <div id='fiducialTimeLapse' class='tabSelector' style='display:none'>
                 <h2>Fiducial Time Lapse</h2>
+                <i>Not Yet Implemented</i>
             </div>
         </div>
     </div>

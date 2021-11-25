@@ -20,15 +20,41 @@
         </div>
         <div class='tabs'>
             <ul class='nav-bar-body'>
-                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('generalSettings')">General Settings</button></li>
-                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('timedTimeLapse')">Timed Time Lapse</button></li>
-                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('redDotTimeLapse')">Red Dot Time Lapse</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('generalSettings')">General
+						Settings</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('timedTimeLapse')">Timed
+						Time Lapse</button></li>
+                <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('redDotTimeLapse')">Red Dot
+						Time Lapse</button></li>
                 <li class='nav-bar-element'><button class='nav-bar-button' onclick="openCity('fiducialTimeLapse')">Fiducial Time Lapse</button></li>
             </ul>
             <br>
             <div id='generalSettings' class='tabSelector'>
                 <h2>General Settings</h2>
-                <p>London is the capital of England.</p>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Output Width:</label>
+                        </td>
+                        <td>
+                            <input type="number" value="320">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Output Height:</label>
+                        </td>
+                        <td>
+                            <input type="number" value="240">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- TODO(hamolicious) implement saving of settings -->
+                            <button>Save</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <div id='timedTimeLapse' class='tabSelector' style='display:none'>

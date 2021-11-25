@@ -6,12 +6,18 @@
     <title>Hello World!</title>
     <link rel="stylesheet" href="index.css">
 
-    <script src="render.js"></script>
+    <script defer src="render.js"></script>
 </head>
 
 <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
+    <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
+    <br>
+    <div style="text-align:center;">
+        <input type="button" id="start" value="Start / Shut down camera" />
+    </div>
+    <input type="button" id="savefile" value="Save photo in Desktop" />
+
 </body>
 
 </html>

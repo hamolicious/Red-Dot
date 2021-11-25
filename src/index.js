@@ -12,8 +12,11 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            nodeIntegration: true
-        }
+            // TODO(hamolicious) implement preload script https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        },
     });
 
     // and load the index.html of the app.

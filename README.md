@@ -12,11 +12,6 @@ Red-Dot is a 100% free, hardware-less 3D printing time-lapse software that utili
 - Launch the red-dot timelapse and start the print
 
 ---
-
-<p align="center">
-<br>
-If you found this project useful it would help me out a ton if you considered buying me a coffe :)
-<a href="https://www.buymeacoffee.com/hamolicious">
-<img src="https://github.com/appcraftstudio/buymeacoffee/raw/master/Images/snapshot-bmc-button.png" width="300">
-</a>
-</p>
+<!--
+This is a pile of shit, noone will pay for this, I dont know what I was thinking 3 years ago
+-->
